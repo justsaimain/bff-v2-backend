@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        \Justsaimain\Ngapyin\NgapyinServiceProvider::class,
 
         /*
          * Application Service Providers...
