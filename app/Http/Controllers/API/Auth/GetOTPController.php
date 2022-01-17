@@ -6,17 +6,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-use App\Http\Requests\RegisterRequest;
 
-class RegisterController extends Controller
+class GetOTPController extends Controller
 {
-    public function __invoke(RegisterRequest $request)
+    public function __invoke(Request $request)
     {
-        $user = User::create($request->all());
 
         $response = Http::get('https://verify.smspoh.com/api/v1/request', [
             "access-token" => env('SMSPOH_TOKEN'),
-            "number" => $user->phone,
+            "number" => $request->number,
             "brand_name" => "BFF Sports",
             "code_length" => 6,
             "sender_name" => "BFF Sports",
@@ -25,9 +23,11 @@ class RegisterController extends Controller
 
         return response()->json([
             'success' => true,
-            'flag' => 'verify_otp',
-            'message' => 'User account created',
-            'data' => $user,
+            'flag' => 'resend_otp',
+            'message' => 'Resend OTP Code',
+            'data' => [
+                'number' => $request->number
+            ],
             'extra' => $response->json()
         ], 200);
     }
