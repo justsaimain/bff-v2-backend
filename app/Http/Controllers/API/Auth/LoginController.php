@@ -11,6 +11,12 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
+    public function username()
+    {
+        return 'phone';
+    }
+
+
     public function __invoke(Request $request)
     {
         if (!$token = auth('api')->attempt($request->only('phone', 'password'))) {
