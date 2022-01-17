@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -46,6 +47,12 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
     ];
+
+
+    public function setPasswordAttribute(string $input): void
+    {
+        $this->attributes['password'] = Hash::make($input);
+    }
 
     // Rest omitted for brevity
 
