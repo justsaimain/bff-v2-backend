@@ -12,4 +12,6 @@ Route::group(['namespace' => 'API'], function () {
         Route::get('me', 'MeController');
         Route::post('logout', 'LogoutController');
     });
+
+    Route::get('fixtures', 'FixtureController');
 });
