@@ -16,9 +16,13 @@ class UserFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'phone' => $this->faker->numberBetween($min = 100000000, $max = 900000000),
+            'phone_verified_at' => now(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'region' => $this->faker->randomElement(['Mandalay', 'Yangon', 'Naypyidaw']),
+            'fav_team' => $this->faker->randomElement(['Arsenal', 'Man U', 'Watford', 'Spurs', 'West Ham']),
+            'password' => 'password',
             'remember_token' => Str::random(10),
         ];
     }

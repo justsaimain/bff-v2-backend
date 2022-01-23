@@ -13,5 +13,10 @@ Route::group(['namespace' => 'API'], function () {
         Route::post('logout', 'LogoutController');
     });
 
-    Route::get('fixtures', 'FixtureController');
+
+    Route::get('options', 'OptionController');
+
+    Route::middleware('auth:api')->group(function () {
+        Route::post('prediction', 'PredictionController@postPrediction');
+    });
 });

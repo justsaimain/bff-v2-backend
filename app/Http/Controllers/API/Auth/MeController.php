@@ -26,6 +26,7 @@ class MeController extends Controller
                 'phone' => $user->phone,
                 'email' => $user->email,
                 'region' => $user->region,
+                'profile' => $user->profile,
                 'fav_team' => $user->fav_team
             ]
         ], 200);

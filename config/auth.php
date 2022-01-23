@@ -1,5 +1,6 @@
 <?php
 
+
 return [
 
     /*
@@ -14,7 +15,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'admin',
         'passwords' => 'users',
     ],
 
@@ -77,7 +78,7 @@ return [
 
         'admins' => [
             'driver' => 'eloquent',
-            'model' => \Justsaimain\Ngapyin\Http\Models\Admin::class,
+            'model' => App\Models\Admin::class,
         ],
 
         // 'users' => [

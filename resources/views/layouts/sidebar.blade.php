@@ -6,64 +6,62 @@
 
               <ul class="metismenu" id="side-menu">
 
-                  <li class="menu-title">Navigation</li>
+                  <li class="menu-title">Dashboard</li>
 
                   <li>
-                      <a href="index.html">
+                      <a href="{{ route('dashboard') }}">
                           <i class="mdi mdi-view-dashboard"></i>
                           <span> Dashboard </span>
                       </a>
                   </li>
 
-                  <li>
-                      <a href="javascript: void(0);">
-                          <i class="mdi mdi-page-layout-sidebar-left"></i>
-                          <span> Layouts </span>
-                          <span class="menu-arrow"></span>
-                      </a>
-                      <ul class="nav-second-level" aria-expanded="false">
-                          <li><a href="layouts-horizontal.html">Horizontal</a></li>
-                          <li><a href="layouts-sidebar-sm.html">Small Sidebar</a></li>
-                          <li><a href="layouts-dark-sidebar.html">Dark Sidebar</a></li>
-                          <li><a href="layouts-dark-topbar.html">Dark Topbar</a></li>
-                          <li><a href="layouts-preloader.html">Preloader</a></li>
-                          <li><a href="layouts-sidebar-collapsed.html">Sidebar Collapsed</a></li>
-                          <li><a href="layouts-boxed.html">Boxed</a></li>
-                      </ul>
-                  </li>
 
-                  <li class="menu-title">Apps</li>
+                  <li class="menu-title">Accounts</li>
 
                   <li>
-                      <a href="apps-chat.html">
-                          <i class="mdi mdi-forum"></i>
+                      <a href="{{ route('users.index') }}">
+                          <i class="mdi mdi-account-group"></i>
                           <span class="badge badge-purple float-right">New</span>
-                          <span> Chat </span>
+                          <span> User </span>
                       </a>
                   </li>
+
+                  <li class="menu-title">Teams</li>
 
                   <li>
-                      <a href="calendar.html">
-                          <i class="mdi mdi-calendar"></i>
-                          <span> Calendar </span>
+                      <a href="{{ route('teams.index') }}">
+                          <i class="mdi mdi-shield-account"></i>
+                          <span> Teams </span>
                       </a>
                   </li>
+                  <li class="menu-title">Fixtures</li>
 
                   <li>
-                      <a href="inbox.html">
-                          <i class="mdi mdi-email"></i>
-                          <span> Mail </span>
+                      <a href="{{ route('fixtures.index') }}">
+                          <i class="mdi mdi-soccer"></i>
+                          <span> Fixtures </span>
                       </a>
                   </li>
 
-                  <li class="menu-title">Components</li>
+                  <li class="menu-title">Predictions</li>
 
                   <li>
-                      <a href="ui-typography.html">
-                          <i class="mdi mdi-format-font"></i>
-                          <span> Typography </span>
+                      <a href="{{ route('predictions.index') }}">
+                          <i class="mdi mdi-strategy"></i>
+                          <span> Predictions </span>
                       </a>
                   </li>
+
+                  <li class="menu-title">App Settings</li>
+
+                  <li>
+                      <a href="{{ route('settings.index') }}">
+                          <i class="mdi mdi-cellphone-cog"></i>
+                          <span>Settings </span>
+                      </a>
+                  </li>
+
+                  <li class="menu-title">Template</li>
 
                   <li>
                       <a href="javascript: void(0);">
@@ -90,124 +88,6 @@
                           <li><a href="ui-widgets.html">Widgets</a></li>
                       </ul>
                   </li>
-
-                  <li>
-                      <a href="javascript: void(0);">
-                          <i class="mdi mdi-texture"></i>
-                          <span class="badge badge-warning float-right">7</span>
-                          <span> Forms </span>
-                      </a>
-                      <ul class="nav-second-level" aria-expanded="false">
-                          <li><a href="form-elements.html">General Elements</a></li>
-                          <li><a href="form-advanced.html">Advanced Form</a></li>
-                          <li><a href="form-validation.html">Form Validation</a></li>
-                          <li><a href="form-wizard.html">Form Wizard</a></li>
-                          <li><a href="form-fileupload.html">Form Uploads</a></li>
-                          <li><a href="form-quilljs.html">Quilljs Editor</a></li>
-                          <li><a href="form-xeditable.html">X-editable</a></li>
-                      </ul>
-                  </li>
-
-                  <li>
-                      <a href="javascript: void(0);">
-                          <i class="mdi mdi-view-list"></i>
-                          <span> Tables </span>
-                          <span class="menu-arrow"></span>
-                      </a>
-                      <ul class="nav-second-level" aria-expanded="false">
-                          <li><a href="tables-basic.html">Basic Tables</a></li>
-                          <li><a href="tables-datatable.html">Data Tables</a></li>
-                          <li><a href="tables-responsive.html">Responsive Table</a></li>
-                          <li><a href="tables-editable.html">Editable Table</a></li>
-                          <li><a href="tables-tablesaw.html">Tablesaw Table</a></li>
-                      </ul>
-                  </li>
-
-                  <li>
-                      <a href="javascript: void(0);">
-                          <i class="mdi mdi-chart-donut-variant"></i>
-                          <span> Charts </span>
-                          <span class="menu-arrow"></span>
-                      </a>
-                      <ul class="nav-second-level" aria-expanded="false">
-                          <li><a href="charts-flot.html">Flot Charts</a></li>
-                          <li><a href="charts-morris.html">Morris Charts</a></li>
-                          <li><a href="charts-chartist.html">Chartist Charts</a></li>
-                          <li><a href="charts-chartjs.html">Chartjs Charts</a></li>
-                          <li><a href="charts-other.html">Other Charts</a></li>
-                      </ul>
-                  </li>
-
-
-                  <li>
-                      <a href="javascript: void(0);">
-                          <i class="mdi mdi-file-multiple"></i>
-                          <span> Pages </span>
-                          <span class="menu-arrow"></span>
-                      </a>
-                      <ul class="nav-second-level" aria-expanded="false">
-                          <li><a href="pages-starter.html">Starter Page</a></li>
-                          <li><a href="pages-login.html">Login</a></li>
-                          <li><a href="pages-register.html">Register</a></li>
-                          <li><a href="pages-recoverpw.html">Recover Password</a></li>
-                          <li><a href="pages-lock-screen.html">Lock Screen</a></li>
-                          <li><a href="pages-confirm-mail.html">Confirm Mail</a></li>
-                          <li><a href="pages-404.html">Error 404</a></li>
-                          <li><a href="pages-500.html">Error 500</a></li>
-                      </ul>
-                  </li>
-
-                  <li>
-                      <a href="javascript: void(0);">
-                          <i class="mdi mdi-layers"></i>
-                          <span> Extra Pages </span>
-                          <span class="menu-arrow"></span>
-                      </a>
-                      <ul class="nav-second-level" aria-expanded="false">
-                          <li><a href="extras-projects.html">Projects</a></li>
-                          <li><a href="extras-tour.html">Tour</a></li>
-                          <li><a href="extras-taskboard.html">Taskboard</a></li>
-                          <li><a href="extras-taskdetail.html">Task Detail</a></li>
-                          <li><a href="extras-profile.html">Profile</a></li>
-                          <li><a href="extras-maps.html">Maps</a></li>
-                          <li><a href="extras-contact.html">Contact list</a></li>
-                          <li><a href="extras-pricing.html">Pricing</a></li>
-                          <li><a href="extras-timeline.html">Timeline</a></li>
-                          <li><a href="extras-invoice.html">Invoice</a></li>
-                          <li><a href="extras-faq.html">FAQs</a></li>
-                          <li><a href="extras-gallery.html">Gallery</a></li>
-                          <li><a href="extras-email-templates.html">Email Templates</a></li>
-                          <li><a href="extras-maintenance.html">Maintenance</a></li>
-                          <li><a href="extras-comingsoon.html">Coming Soon</a></li>
-                      </ul>
-                  </li>
-
-                  <li>
-                      <a href="javascript: void(0);">
-                          <i class="mdi mdi-share-variant"></i>
-                          <span> Multi Level </span>
-                          <span class="menu-arrow"></span>
-                      </a>
-                      <ul class="nav-second-level nav" aria-expanded="false">
-                          <li>
-                              <a href="javascript: void(0);">Level 1.1</a>
-                          </li>
-                          <li>
-                              <a href="javascript: void(0);" aria-expanded="false">Level 1.2
-                                  <span class="menu-arrow"></span>
-                              </a>
-                              <ul class="nav-third-level nav" aria-expanded="false">
-                                  <li>
-                                      <a href="javascript: void(0);">Level 2.1</a>
-                                  </li>
-                                  <li>
-                                      <a href="javascript: void(0);">Level 2.2</a>
-                                  </li>
-                              </ul>
-                          </li>
-                      </ul>
-                  </li>
-              </ul>
 
           </div>
           <!-- End Sidebar -->

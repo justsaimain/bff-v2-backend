@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="BFF Management" name="description" />
     <meta content="justsaimain" name="author" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
@@ -36,9 +37,9 @@
                                 <h4 class="text-uppercase mt-0">Sign In</h4>
                             </div>
 
-                            <form action="{{ route('backend.login') }}" method="POST" >
+                            <form action="{{ route('login') }}" method="POST">
                                 @csrf
-
+                                @method('POST')
                                 <div class="form-group mb-3">
                                     <label for="emailaddress">Email address</label>
                                     <input class="form-control" type="email" id="emailaddress" required=""
