@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
+use App\Models\Option;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +16,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         \App\Models\User::factory(100)->create();
+
+        Option::create([
+            'current_gameweek' => 24
+        ]);
 
         Admin::create([
             'name' => 'BFF Admin',

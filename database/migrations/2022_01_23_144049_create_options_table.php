@@ -15,6 +15,7 @@ class CreateOptionsTable extends Migration
     {
         Schema::create('options', function (Blueprint $table) {
             $table->id();
+            $table->integer('total_gameweek')->default(38);
             $table->integer('current_gameweek')->nullable();
             $table->string('overall_pts')->nullable();
             $table->string('goal_difference_pts')->nullable();
