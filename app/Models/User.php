@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Prediction;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -75,5 +76,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function predictions()
+    {
+        return $this->hasMany(Prediction::class);
     }
 }

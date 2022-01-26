@@ -25,7 +25,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/', 'DashboardController@index')->name('dashboard');
 
     Route::get('/settings', 'SettingController@index')->name('settings.index');
-
+    Route::post('/setting/current-gamweek', 'SettingController@updateCurrentGameWeek')->name('settings.update_current_gameweek');
 
     Route::get('/teams', 'TeamController@index')->name('teams.index');
 

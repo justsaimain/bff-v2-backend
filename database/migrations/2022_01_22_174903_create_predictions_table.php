@@ -16,19 +16,11 @@ class CreatePredictionsTable extends Migration
         Schema::create('predictions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->integer('team_h');
-            $table->integer('team_a');
-            $table->boolean('2x_booster')->default(false);
-            $table->string('fixture_code');
-            $table->string('fixture_event');
             $table->string('fixture_id');
-            $table->string('fixture_kickoff_time');
-            $table->string('overall_pts')->nullable();
-            $table->string('goal_difference_pts')->nullable();
-            $table->string('home_goals_pts')->nullable();
-            $table->string('away_goals_pts')->nullable();
-            $table->string('underdog_bonus_pts')->nullable();
-            $table->string('2x_booster_pts')->nullable();
+            $table->string('fixture_event');
+            $table->json('team_h_goal');
+            $table->json('team_a_goal');
+            $table->boolean('2x_booster')->default(false);
             $table->timestamps();
         });
     }

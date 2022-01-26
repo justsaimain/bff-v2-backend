@@ -18,5 +18,6 @@ Route::group(['namespace' => 'API'], function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::post('prediction', 'PredictionController@postPrediction');
+        Route::get('prediction', 'PredictionController@getPredictionList');
     });
 });
