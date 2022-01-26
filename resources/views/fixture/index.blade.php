@@ -5,7 +5,7 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <table id="datatable" class="table table-striped table-bordered " style="width:100%">
+                    <table id="datatable" class="table table-responsive table-striped table-bordered " style="width:100%">
                         <thead>
                             <tr>
                                 <th>ID</th>
