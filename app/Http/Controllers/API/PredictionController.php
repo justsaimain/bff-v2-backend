@@ -20,13 +20,14 @@ class PredictionController extends Controller
         ]);
 
         $checkExisting = Prediction::where('user_id', Auth::id())
-            ->where('fixture_event', $request->event)->first();
+            ->where('fixture_event', $request->event)
+            ->where('fixture_id', $request->id)
+            ->first();
 
         if ($checkExisting) {
             $checkExisting->team_h_goal = $request->home_team_goal;
             $checkExisting->team_a_goal = $request->away_team_goal;
             $checkExisting->update();
-
             $return_data = $checkExisting;
         } else {
             $prediction = new Prediction();
