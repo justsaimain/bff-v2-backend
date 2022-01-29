@@ -15,6 +15,7 @@ Route::group(['namespace' => 'API'], function () {
 
 
     Route::get('options', 'OptionController');
+    Route::get('fixtures', 'FixtureController');
 
     Route::middleware('auth:api')->group(function () {
         Route::post('prediction', 'PredictionController@postPrediction');
