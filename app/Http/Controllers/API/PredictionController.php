@@ -25,13 +25,15 @@ class PredictionController extends Controller
             ->first();
 
         if ($request->twox_booster == true) {
-            if ($checkBoosted) {
-                return response()->json([
-                    'success' => false,
-                    'flag' => 'boosted_limit',
-                    'message' => 'You already boosted one fixture for this Game Week.',
-                    'data' => json_decode($checkBoosted),
-                ], 200);
+            if ($request->id != $checkBoosted->fixture_id) {
+                if ($checkBoosted) {
+                    return response()->json([
+                        'success' => false,
+                        'flag' => 'boosted_limit',
+                        'message' => 'You already boosted one fixture for this Game Week.',
+                        'data' => json_decode($checkBoosted),
+                    ], 200);
+                }
             }
         }
 
