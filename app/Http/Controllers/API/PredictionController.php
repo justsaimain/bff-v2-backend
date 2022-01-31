@@ -19,6 +19,22 @@ class PredictionController extends Controller
             'away_team_goal' => 'required'
         ]);
 
+        $checkBoosted = Prediction::where('user_id', Auth::id())
+            ->where('fixture_event', $request->event)
+            ->where('twox_booster', true)
+            ->first();
+
+        if ($request->twox_booster == true) {
+            if ($checkBoosted) {
+                return response()->json([
+                    'success' => false,
+                    'flag' => 'boosted_limit',
+                    'message' => 'You already boosted one fixture for this Game Week.',
+                    'data' => json_decode($checkBoosted),
+                ], 200);
+            }
+        }
+
         $checkExisting = Prediction::where('user_id', Auth::id())
             ->where('fixture_event', $request->event)
             ->where('fixture_id', $request->id)
@@ -27,6 +43,7 @@ class PredictionController extends Controller
         if ($checkExisting) {
             $checkExisting->team_h_goal = $request->home_team_goal;
             $checkExisting->team_a_goal = $request->away_team_goal;
+            $checkExisting->twox_booster = $request->twox_booster;
             $checkExisting->update();
             $return_data = $checkExisting;
         } else {
@@ -34,10 +51,10 @@ class PredictionController extends Controller
             $prediction->user_id = Auth::id();
             $prediction->fixture_id = $request->id;
             $prediction->fixture_event = $request->event;
+            $prediction->twox_booster = $request->twox_booster;
             $prediction->team_h_goal = $request->home_team_goal;
             $prediction->team_a_goal = $request->away_team_goal;
             $prediction->save();
-
             $return_data = $prediction;
         }
 

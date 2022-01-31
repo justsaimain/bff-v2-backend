@@ -20,7 +20,7 @@ class CreatePredictionsTable extends Migration
             $table->string('fixture_event');
             $table->json('team_h_goal');
             $table->json('team_a_goal');
-            $table->boolean('2x_booster')->default(false);
+            $table->boolean('twox_booster')->default(false);
             $table->timestamps();
         });
     }

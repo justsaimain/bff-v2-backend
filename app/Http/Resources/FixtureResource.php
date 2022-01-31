@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Option;
 use App\Models\Prediction;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -48,14 +49,48 @@ class FixtureResource extends JsonResource
      */
     public function toArray($request)
     {
+        $total_pts = 0;
+        $prediction = null;
+
+        $options = Option::first();
 
         if (Auth::guard('api')->check()) {
             $prediction = Prediction::where('user_id', Auth::guard('api')->id())
                 ->where('fixture_id', $this['id'])
                 ->where('fixture_event', $this['event'])
                 ->first();
-        } else {
-            $prediction = null;
+
+            if ($prediction) {
+                if ($this['finished'] == true) {
+                    $home_team_predict = $prediction->team_h_goal['value'];
+                    $away_team_predict = $prediction->team_a_goal['value'];
+                    $home_team_score = $this['team_h_score'];
+                    $away_team_score = $this['team_a_score'];
+
+                    if ($home_team_predict === $home_team_score && $away_team_predict === $away_team_score) {
+                        $total_pts = $total_pts + $options->win_lose_draw_pts;
+                    }
+
+                    $goal_different = abs($home_team_score - $away_team_score);
+                    $goal_different_predict = abs($home_team_predict - $away_team_predict);
+
+                    if ($goal_different == $goal_different_predict) {
+                        $total_pts = $total_pts +  $options->goal_difference_pts;
+                    }
+
+                    if ($home_team_predict == $home_team_score) {
+                        $total_pts = $total_pts +  $options->home_goals_pts;
+                    }
+
+                    if ($away_team_predict == $away_team_score) {
+                        $total_pts = $total_pts +  $options->away_goals_pts;
+                    }
+
+                    if ($prediction->twox_booster == 1) {
+                        $total_pts = $total_pts * $options->twox_booster_pts;
+                    }
+                }
+            }
         }
 
         $arrayData = [
@@ -72,7 +107,8 @@ class FixtureResource extends JsonResource
             'team_a_score' => $this['team_a_score'],
             'team_h' => $this->getTeam($this['team_h'], 'team_h'),
             'team_h_score' => $this['team_h_score'],
-            'prediction' => new PredictionResource($prediction)
+            'prediction' => new PredictionResource($prediction),
+            'result_pts' => $total_pts,
         ];
 
         return $arrayData;
