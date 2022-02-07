@@ -13,10 +13,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class FixtureResource extends JsonResource
 {
-
     public function getTeamsData()
     {
-
         $cacheData = Cache::get('teams__data__' . Carbon::now()->format('H:i'));
 
         if (!$cacheData) {
@@ -54,11 +52,14 @@ class FixtureResource extends JsonResource
 
         $options = Option::first();
 
+      
+
         if (Auth::guard('api')->check()) {
             $prediction = Prediction::where('user_id', Auth::guard('api')->id())
                 ->where('fixture_id', $this['id'])
                 ->where('fixture_event', $this['event'])
                 ->first();
+
 
             if ($prediction) {
                 if ($this['finished'] == true) {
@@ -67,9 +68,41 @@ class FixtureResource extends JsonResource
                     $home_team_score = $this['team_h_score'];
                     $away_team_score = $this['team_a_score'];
 
-                    if ($home_team_predict === $home_team_score && $away_team_predict === $away_team_score) {
+                    // calculate win lose draw point > +3 pts
+
+                    $home_team_win = $home_team_score > $away_team_score;
+                    $home_team_win = $home_team_score > $away_team_score;
+                    $both_team_draw = $home_team_score == $away_team_score;
+
+                    $final_result = "";
+                    $predict_result = "";
+
+                    if ($home_team_score > $away_team_score) {
+                        $final_result = "home_team_win";
+                    }
+                    if ($home_team_score < $away_team_score) {
+                        $final_result = "home_team_lose";
+                    }
+                    if ($home_team_score == $away_team_score) {
+                        $final_result = "draw";
+                    }
+
+                    if ($home_team_predict > $away_team_predict) {
+                        $predict_result = "home_team_win";
+                    }
+                    if ($home_team_predict < $away_team_predict) {
+                        $predict_result = "home_team_lose";
+                    }
+                    if ($home_team_predict == $away_team_predict) {
+                        $predict_result = "draw";
+                    }
+    
+
+                    if ($final_result == $predict_result) {
                         $total_pts = $total_pts + $options->win_lose_draw_pts;
                     }
+
+                    // calculate goal different pts
 
                     $goal_different = abs($home_team_score - $away_team_score);
                     $goal_different_predict = abs($home_team_predict - $away_team_predict);
@@ -78,6 +111,7 @@ class FixtureResource extends JsonResource
                         $total_pts = $total_pts +  $options->goal_difference_pts;
                     }
 
+                    // calculate team goal pts
                     if ($home_team_predict == $home_team_score) {
                         $total_pts = $total_pts +  $options->home_goals_pts;
                     }
@@ -85,6 +119,8 @@ class FixtureResource extends JsonResource
                     if ($away_team_predict == $away_team_score) {
                         $total_pts = $total_pts +  $options->away_goals_pts;
                     }
+
+                    // two x booster pts
 
                     if ($prediction->twox_booster == 1) {
                         $total_pts = $total_pts * $options->twox_booster_pts;
