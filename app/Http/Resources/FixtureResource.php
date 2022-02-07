@@ -60,7 +60,6 @@ class FixtureResource extends JsonResource
                 ->where('fixture_event', $this['event'])
                 ->first();
 
-
             if ($prediction) {
                 if ($this['finished'] == true) {
                     $home_team_predict = $prediction->team_h_goal['value'];

@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('login', 'Auth\LoginController@showLoginForm');
 Route::post('login', 'Auth\LoginController@login')->name('login');
 Route::post('logout', 'Auth\LogoutController')->name('logout');
@@ -18,9 +17,10 @@ Route::get('/test', function () {
 
 
 Route::middleware('auth:admin')->group(function () {
-
     Route::get('/ssd/users', 'DataTableController@getUsers');
     Route::get('/ssd/fixtures', 'DataTableController@getFixtures');
+    Route::get('/ssd/predictions', 'DataTableController@getPredictions');
+
 
     Route::get('/', 'DashboardController@index')->name('dashboard');
 
@@ -32,6 +32,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/fixtures', 'FixtureController@index')->name('fixtures.index');
 
     Route::get('/predictions', 'PredictionController@index')->name('predictions.index');
+    Route::get('/predictions/{id}', 'PredictionController@show')->name('predictions.show');
 
     Route::get('users', 'UserController@index')->name('users.index');
     Route::get('users/{id}', 'UserController@show')->name('users.show');

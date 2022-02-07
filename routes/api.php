@@ -13,6 +13,8 @@ Route::group(['namespace' => 'API'], function () {
         Route::post('logout', 'LogoutController');
     });
 
+    Route::get('teams', 'TeamController');
+
 
     Route::get('options', 'OptionController');
     Route::get('fixtures', 'FixtureController');
