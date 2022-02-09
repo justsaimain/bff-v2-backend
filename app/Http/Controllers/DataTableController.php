@@ -102,9 +102,9 @@ class DataTableController extends Controller
             $fixtures = $cacheData;
         } else {
             $response =  Http::withHeaders([
-                'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
-                'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
-            ])->get('https://fantasy-premier-league3.p.rapidapi.com/fixtures');
+            'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
+            'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
+        ])->get('https://fantasy-premier-league3.p.rapidapi.com/fixtures');
             $fixtures = $response->json();
             Cache::put('predictoin_fixtures__data__cache', $fixtures, now()->addMinutes(3));
         }
@@ -155,7 +155,7 @@ class DataTableController extends Controller
                 if ($home_team_predict == $away_team_predict) {
                     $predict_result = "draw";
                 }
-    
+
 
                 if ($final_result == $predict_result) {
                     $total_pts = $total_pts + $options->win_lose_draw_pts;
@@ -196,6 +196,9 @@ class DataTableController extends Controller
                     return '<span class="badge badge-success" style="font-size:12px;"> + ' . $data['total_pts'] . '</span>';
                 }
                 return '<small>Not Finished</small>';
+            })
+            ->editColumn('fixture_event', function ($data) {
+                return 'GW' . $data['fixture_event'];
             })
              ->editColumn('updated_at', function ($data) {
                  return $data['updated_at']->format('d M Y - h:i A');

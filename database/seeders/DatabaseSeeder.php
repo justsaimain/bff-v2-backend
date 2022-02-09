@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@gmail.com',
             'email_verified_at' => now(),
             'region' => "Yangon",
-            'fav_team' => 'West Ham',
+            'fav_team' => 1,
             'password' => '123',
             'remember_token' => Str::random(10),
         ]);

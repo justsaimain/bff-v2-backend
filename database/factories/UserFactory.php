@@ -21,7 +21,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'region' => $this->faker->randomElement(['Mandalay', 'Yangon', 'Naypyidaw']),
-            'fav_team' => $this->faker->randomElement(['Arsenal', 'Man U', 'Watford', 'Spurs', 'West Ham']),
+            'fav_team' => $this->faker->randomElement([1,2,3,4,5,6,7,8,9,10]),
             'password' => 'password',
             'remember_token' => Str::random(10),
         ];
