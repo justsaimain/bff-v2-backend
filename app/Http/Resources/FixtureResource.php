@@ -50,6 +50,7 @@ class FixtureResource extends JsonResource
         $total_pts = 0;
         $prediction = null;
 
+        $breakdown = [];
         $options = Option::first();
 
       
@@ -59,6 +60,12 @@ class FixtureResource extends JsonResource
                 ->where('fixture_id', $this['id'])
                 ->where('fixture_event', $this['event'])
                 ->first();
+
+            $pts_breakdown_outcome = 0;
+            $pts_breakdown_goal_diff = 0;
+            $pts_breakdown_home_goal = 0;
+            $pts_breakdown_away_goal = 0;
+            $pts_breakdown_boost = 0;
 
             if ($prediction) {
                 if ($this['finished'] == true) {
@@ -75,6 +82,8 @@ class FixtureResource extends JsonResource
 
                     $final_result = "";
                     $predict_result = "";
+
+
 
                     if ($home_team_score > $away_team_score) {
                         $final_result = "home_team_win";
@@ -99,6 +108,7 @@ class FixtureResource extends JsonResource
 
                     if ($final_result == $predict_result) {
                         $total_pts = $total_pts + $options->win_lose_draw_pts;
+                        $pts_breakdown_outcome = $options->win_lose_draw_pts;
                     }
 
                     // calculate goal different pts
@@ -108,24 +118,37 @@ class FixtureResource extends JsonResource
 
                     if ($goal_different == $goal_different_predict) {
                         $total_pts = $total_pts +  $options->goal_difference_pts;
+                        $pts_breakdown_goal_diff = $options->goal_difference_pts;
                     }
 
                     // calculate team goal pts
                     if ($home_team_predict == $home_team_score) {
                         $total_pts = $total_pts +  $options->home_goals_pts;
+                        $pts_breakdown_home_goal = $options->home_goals_pts;
                     }
 
                     if ($away_team_predict == $away_team_score) {
                         $total_pts = $total_pts +  $options->away_goals_pts;
+                        $pts_breakdown_away_goal = $options->away_goals_pts;
                     }
 
                     // two x booster pts
 
                     if ($prediction->twox_booster == 1) {
                         $total_pts = $total_pts * $options->twox_booster_pts;
+                        $pts_breakdown_boost =  $options->twox_booster_pts;
                     }
                 }
             }
+
+            $breakdown = [
+                        'outcome' => $pts_breakdown_outcome ? $pts_breakdown_outcome : 0,
+                        'goal_diff' => $pts_breakdown_goal_diff ? $pts_breakdown_goal_diff : 0,
+                        'home_goal' => $pts_breakdown_home_goal ? $pts_breakdown_home_goal : 0,
+                        'away_goal' => $pts_breakdown_away_goal ? $pts_breakdown_away_goal : 0,
+                        'boost' => $pts_breakdown_boost,
+                        'total' => $total_pts
+                    ];
         }
 
         $arrayData = [
@@ -144,6 +167,7 @@ class FixtureResource extends JsonResource
             'team_h_score' => $this['team_h_score'],
             'prediction' => new PredictionResource($prediction),
             'result_pts' => $total_pts,
+            'breakdown' =>  $breakdown
         ];
 
         return $arrayData;
