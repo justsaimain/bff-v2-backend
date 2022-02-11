@@ -117,13 +117,20 @@ class LeaderboardController extends Controller
             }
             return (($a["total_pts"] > $b["total_pts"]) ? -1 : 1);
         });
+        
+        $result = array();
+        foreach ($arrayData as $k => $v) {
+            $id = $v['user']['id'];
+            $result[$id]['user'] = $v['user'];
+            $result[$id]['total_pts'] = $v['total_pts'];
+        }
 
-
+     
         return response()->json([
             'success' => true,
             'flag' => 'leaderboard',
             'message' => 'Get Leaderboard List',
-            'data' => $arrayData
+            'data' => array_values($result)
         ], 200);
     }
 }
