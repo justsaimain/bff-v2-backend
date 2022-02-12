@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class VerifyController extends Controller
 {
     public function __invoke(Request $request)
     {
-
-        $user = User::where('phone', $request->number)->first();
+        $cache_date = Cache::get('user__register__' . $request->number);
+        if (!$cache_date) {
+            return response()->json([
+                'success' => false,
+                'flag' => 'not_cache_found',
+                'message' => 'Register timeout, please try again.',
+                'data' => null,
+                'extra' => null
+            ], 200);
+        }
 
         $response = Http::get('https://verify.smspoh.com/api/v1/verify', [
             "access-token" => env('SMSPOH_TOKEN'),
@@ -25,8 +34,7 @@ class VerifyController extends Controller
         $data = $response->json();
 
         if ($data['status'] === true) {
-            $user->phone_verified_at = Carbon::now();
-
+            $user = User::create($cache_date);
             if (!$userToken = JWTAuth::fromUser($user)) {
                 return response()->json([
                     'success' => false,
@@ -51,8 +59,8 @@ class VerifyController extends Controller
                 'success' => false,
                 'flag' => 'wrong',
                 'message' => 'Something was wrong',
-                'data' => $user,
-                'extra' => $response->json()
+                'data' => $response->json(),
+                'extra' => null
             ], 200);
         }
     }
