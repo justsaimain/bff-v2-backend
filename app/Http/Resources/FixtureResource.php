@@ -54,7 +54,6 @@ class FixtureResource extends JsonResource
         $options = Option::first();
 
       
-
         if (Auth::guard('api')->check()) {
             $prediction = Prediction::where('user_id', Auth::guard('api')->id())
                 ->where('fixture_id', $this['id'])
@@ -76,13 +75,12 @@ class FixtureResource extends JsonResource
 
                     // calculate win lose draw point > +3 pts
 
-                    $home_team_win = $home_team_score > $away_team_score;
-                    $home_team_win = $home_team_score > $away_team_score;
-                    $both_team_draw = $home_team_score == $away_team_score;
+                        $home_team_win = $home_team_score > $away_team_score;
+                        $home_team_win = $home_team_score > $away_team_score;
+                        $both_team_draw = $home_team_score == $away_team_score;
 
                     $final_result = "";
                     $predict_result = "";
-
 
 
                     if ($home_team_score > $away_team_score) {

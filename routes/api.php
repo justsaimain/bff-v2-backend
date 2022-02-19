@@ -17,7 +17,7 @@ Route::group(['namespace' => 'API'], function () {
     Route::get('options', 'OptionController');
     Route::get('fixtures', 'FixtureController');
     Route::get('leaderboard', 'LeaderboardController');
-
+    Route::get('home-data', 'HomeController');
 
 
     Route::middleware('auth:api')->group(function () {
