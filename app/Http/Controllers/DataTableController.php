@@ -89,7 +89,7 @@ class DataTableController extends Controller
             })->rawColumns(['finished', 'started', 'action', 'result'])->make(true);
     }
 
-  
+
     public function getPredictions()
     {
         $predictions = Prediction::with('user')->get();

@@ -20,7 +20,6 @@ class RegisterController extends Controller
 
         Cache::put('user__register__' . $request->phone, $request->all(), Carbon::now()->addMinute());
 
-
         $response = Http::get('https://verify.smspoh.com/api/v1/request', [
             "access-token" => env('SMSPOH_TOKEN'),
             "number" => $request->phone,

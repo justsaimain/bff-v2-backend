@@ -15,6 +15,8 @@ class VerifyController extends Controller
     public function __invoke(Request $request)
     {
         $cache_date = Cache::get('user__register__' . $request->number);
+
+
         if (!$cache_date) {
             return response()->json([
                 'success' => false,

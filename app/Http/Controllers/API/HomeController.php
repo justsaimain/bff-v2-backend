@@ -74,7 +74,7 @@ class HomeController extends Controller
                 if ($home_team_predict == $away_team_predict) {
                     $predict_result = "draw";
                 }
-    
+
 
                 if ($final_result == $predict_result) {
                     $predict_user_scores = $predict_user_scores + $options->win_lose_draw_pts;
@@ -108,7 +108,7 @@ class HomeController extends Controller
                     $predict_user_scores = $predict_user_scores * $options->twox_booster_pts;
                     $p_score = $p_score + $options->twox_booster_pts;
                 }
-                
+
                 array_push($user_score_list, ['id' => $prediction->user_id ,'user'=> $prediction->user, 'pts' => $p_score]);
             }
         }
@@ -158,7 +158,7 @@ class HomeController extends Controller
                     if ($home_team_predict == $away_team_predict) {
                         $predict_result = "draw";
                     }
-    
+
 
                     if ($final_result == $predict_result) {
                         $your_score = $your_score + $options->win_lose_draw_pts;
@@ -204,7 +204,7 @@ class HomeController extends Controller
 
 
         $pts_list = array_column($filtered_score_list, 'pts');
-        $max_pts_index = array_keys($pts_list, max($pts_list));
+        $max_pts_index = count($pts_list) > 0 ? array_keys($pts_list, max($pts_list)) : 0;
 
         return response()->json([
             'success' => true,
@@ -215,7 +215,7 @@ class HomeController extends Controller
                 'current_gameweek' => $current_gameweek,
                 'your_score' => $your_score,
                 'avg_score' => round($predict_user_scores / count($filtered_score_list)),
-                'highest_score' => max($pts_list),
+                'highest_score' => count($pts_list) > 0 ? max($pts_list) : 1,
                 'top_predictor' => $filtered_score_list[$max_pts_index[0]]
             ]
         ], 200);
