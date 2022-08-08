@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Option;
 use App\Models\Prediction;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -53,7 +54,7 @@ class FixtureResource extends JsonResource
         $breakdown = [];
         $options = Option::first();
 
-      
+
         if (Auth::guard('api')->check()) {
             $prediction = Prediction::where('user_id', Auth::guard('api')->id())
                 ->where('fixture_id', $this['id'])
@@ -102,7 +103,7 @@ class FixtureResource extends JsonResource
                     if ($home_team_predict == $away_team_predict) {
                         $predict_result = "draw";
                     }
-    
+
 
                     if ($final_result == $predict_result) {
                         $total_pts = $total_pts + $options->win_lose_draw_pts;
@@ -149,13 +150,15 @@ class FixtureResource extends JsonResource
                     ];
         }
 
+        $datetime = new DateTime($this['kickoff_time']);
+
         $arrayData = [
             'code' => $this['code'],
             'event' => $this['event'],
             'finished' => $this['finished'],
             'finished_provisional' => $this['finished_provisional'],
             'id' => $this['id'],
-            'kickoff_time' => $this['kickoff_time'],
+            'kickoff_time' => $datetime->format(DateTime::ATOM),
             'minutes' => $this['minutes'],
             'provisional_start_time' => $this['provisional_start_time'],
             'started' => $this['started'],
