@@ -24,7 +24,7 @@ class LoginController extends Controller
                 'success' =>  false,
                 'message' => 'Incorrect credentials',
                 'data' => []
-            ], 401);
+            ], 200);
         }
 
         return response()->json([
