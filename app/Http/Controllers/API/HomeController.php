@@ -43,12 +43,18 @@ class HomeController extends Controller
 
     public function getFixtureResult($fixture)
     {
-        $fixtures = Http::withHeaders([
-            'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
-            'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
-        ])->get(config('url.fixtures'), [
-            'gw' => $fixture->fixture_event,
-        ])->json();
+        $cacheData = Cache::get('leaderboard_fixtures__data__cache');
+        if ($cacheData) {
+            $fixtures = $cacheData;
+        } else {
+            $fixtures = Http::withHeaders([
+                'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
+                'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
+            ])->get(config('url.fixtures'), [
+                'gw' => $fixture->fixture_event,
+            ])->json();
+            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(3));
+        }
 
         $fixture_collection = collect($fixtures);
         $filtered = $fixture_collection->filter(function($item) use ($fixture){
