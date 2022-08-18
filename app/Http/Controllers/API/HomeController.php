@@ -59,12 +59,21 @@ class HomeController extends Controller
         $fixture_collection = collect($fixtures);
         $filtered = $fixture_collection->filter(function($item) use ($fixture){
             return $item["finished"] === true && $item["id"] === (int) $fixture->fixture_id;
-        })->values()[0];
+        })->values();
 
-        return [
-            "team_a_score" => $filtered['team_a_score'],
-            "team_h_score" => $filtered['team_h_score']
-        ];
+        if(count($filtered) > 0){
+            return [
+                "team_a_score" =>  $filtered[0]['team_a_score'],
+                "team_h_score" => $filtered[0]['team_h_score']
+            ];
+        }else{
+            return [
+                "team_a_score" => 0,
+                "team_h_score" => 0
+            ];
+        }
+
+
 
     }
 
@@ -73,7 +82,6 @@ class HomeController extends Controller
         $user = Auth::guard('api')->user();
         $current_gameweek = Option::first()->current_gameweek;
         $options = Option::first();
-        $predict_user_scores = 0;
         $user_score_list = [];
         $your_score_list = [];
         $used_twox_booster_your_score = 0;
@@ -109,10 +117,10 @@ class HomeController extends Controller
 
         $predictions = Prediction::where('fixture_event', $current_gameweek)->orderBy("twox_booster","desc") ->get();
 
+
         foreach ($predictions as $prediction) {
             $temp_score_list = [];
             $fixture_result = $this->getFixtureResult($prediction);
-
 
             $final_result = "";
             $predict_result = "";
