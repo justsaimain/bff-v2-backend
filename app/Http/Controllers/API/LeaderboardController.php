@@ -30,12 +30,19 @@ class LeaderboardController extends Controller
         $fixture_collection = collect($fixtures);
         $filtered = $fixture_collection->filter(function($item) use ($fixture){
             return $item["finished"] === true && $item["id"] === (int) $fixture->fixture_id;
-        })->values()[0];
+        })->values();
 
-        return [
-            "team_a_score" => $filtered['team_a_score'],
-            "team_h_score" => $filtered['team_h_score']
-        ];
+        if(count($filtered) > 0){
+            return [
+                "team_a_score" =>  $filtered[0]['team_a_score'],
+                "team_h_score" => $filtered[0]['team_h_score']
+            ];
+        }else{
+            return [
+                "team_a_score" => 0,
+                "team_h_score" => 0
+            ];
+        }
 
     }
 

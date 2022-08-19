@@ -53,7 +53,7 @@ class HomeController extends Controller
             ])->get(config('url.fixtures'), [
                 'gw' => $fixture->fixture_event,
             ])->json();
-            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(3));
+            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes());
         }
 
         $fixture_collection = collect($fixtures);
@@ -72,9 +72,6 @@ class HomeController extends Controller
                 "team_h_score" => 0
             ];
         }
-
-
-
     }
 
     public function __invoke()
@@ -86,16 +83,43 @@ class HomeController extends Controller
         $your_score_list = [];
         $used_twox_booster_your_score = 0;
         $used_twox_booster_high_score = 0;
+        $deadline = [];
 
-        $fixtures = Http::withHeaders([
-            'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
-            'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
-        ])->get(config('url.fixtures'), [
-            'gw' => $current_gameweek,
-        ])->json();
+        $cacheData = Cache::get('leaderboard_fixtures__data__cache');
+
+        if ($cacheData) {
+            $fixtures = $cacheData;
+        } else {
+            $fixtures = Http::withHeaders([
+                'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
+                'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
+            ])->get(config('url.fixtures'), [
+                'gw' => $current_gameweek,
+            ])->json();
+            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(3));
+        }
+
+        $fixture_collection = collect($fixtures);
+        $filtered_upcoming_matches = $fixture_collection->filter(function($item){
+            return $item["finished"] === false;
+        })->values();
+
+        $first_upcoming_match = $filtered_upcoming_matches[0];
+
+        $first_upcoming_match_full_date =  Carbon::parse($first_upcoming_match['kickoff_time'])->subMinutes(30);
+
+        $different_from_full_date = Carbon::now()->diff($first_upcoming_match_full_date, false);
+
+        $deadline = [
+            "days" => $different_from_full_date->d,
+            "hours" => $different_from_full_date->h,
+            "minutes" => $different_from_full_date->i
+        ];
+
 
         $recent_matchs = [];
         $matchs = array_reverse($fixtures);
+
         foreach ($matchs as $key => $match){
             if ($match['finished'] === true){
              if(count($recent_matchs) <= 5){
@@ -265,7 +289,6 @@ class HomeController extends Controller
         $pts_list = array_column($filtered_score_list, 'pts');
         $max_pts_index = count($pts_list) > 0 ? array_keys($pts_list, max($pts_list)) : 0;
 
-
         return response()->json([
             'success' => true,
             'flag' => 'home_page_data',
@@ -277,7 +300,8 @@ class HomeController extends Controller
                 'avg_score' => count($filtered_score_list) > 0 ? round(array_sum(array_column($filtered_score_list, 'pts')) / count($filtered_score_list)) : 0,
                 'highest_score' => count($pts_list) > 0 ? max($pts_list) : 1,
                 'top_predictor' => count($filtered_score_list) > 0 ? $filtered_score_list[$max_pts_index[0]] : null,
-                'recent_matchs' => $recent_matchs
+                'recent_matchs' => $recent_matchs,
+                'deadline' => $deadline
                 ]
         ], 200);
     }

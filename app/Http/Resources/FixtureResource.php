@@ -50,6 +50,7 @@ class FixtureResource extends JsonResource
     {
         $total_pts = 0;
         $prediction = null;
+        $used_2x_booster = false;
 
         $breakdown = [];
         $options = Option::first();
@@ -60,7 +61,6 @@ class FixtureResource extends JsonResource
                 ->where('fixture_id', $this['id'])
                 ->where('fixture_event', $this['event'])
                 ->first();
-
             $pts_breakdown_outcome = 0;
             $pts_breakdown_goal_diff = 0;
             $pts_breakdown_home_goal = 0;
@@ -134,6 +134,7 @@ class FixtureResource extends JsonResource
                     // two x booster pts
 
                     if ($prediction->twox_booster == 1) {
+                        $used_2x_booster = true;
                         $total_pts = $total_pts * $options->twox_booster_pts;
                         $pts_breakdown_boost =  $options->twox_booster_pts;
                     }
@@ -153,6 +154,7 @@ class FixtureResource extends JsonResource
         $datetime = new DateTime($this['kickoff_time']);
 
         $arrayData = [
+            'used_booster' => $used_2x_booster,
             'code' => $this['code'],
             'event' => $this['event'],
             'finished' => $this['finished'],
