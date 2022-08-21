@@ -127,12 +127,6 @@ class LeaderboardController extends Controller
             array_push($arrayData, $prediction);
         }
 
-        usort($arrayData, function ($a, $b) {
-            if ($a["total_pts"] == $b["total_pts"]) {
-                return (0);
-            }
-            return (($a["total_pts"] > $b["total_pts"]) ? -1 : 1);
-        });
 
         $result = array();
         foreach ($arrayData as $k => $v) {
@@ -141,15 +135,19 @@ class LeaderboardController extends Controller
             $result[$id]['user'] = $v['user'];
         }
         $new = array();
+
         foreach ($result as $key => $value) {
             $new[] = array('user' => $value['user'], 'total_pts' => array_sum($value['pts']));
         }
+
+        $collectData = collect($new);
+        $sortedData = $collectData->sortByDesc('total_pts');
 
         return response()->json([
             'success' => true,
             'flag' => 'leaderboard',
             'message' => 'Get Leaderboard List',
-            'data' => $new
+            'data' => $sortedData
         ], 200);
     }
 }
