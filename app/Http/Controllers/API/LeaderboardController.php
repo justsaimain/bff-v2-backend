@@ -24,7 +24,7 @@ class LeaderboardController extends Controller
             ])->get(config('url.fixtures'), [
                 'gw' => $fixture->fixture_event,
             ])->json();
-            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(3));
+            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addSeconds(20));
         }
 
         $fixture_collection = collect($fixtures);
@@ -39,8 +39,8 @@ class LeaderboardController extends Controller
             ];
         }else{
             return [
-                "team_a_score" => 0,
-                "team_h_score" => 0
+                "team_a_score" => null,
+                "team_h_score" => null
             ];
         }
 
@@ -50,7 +50,7 @@ class LeaderboardController extends Controller
     {
         $arrayData = [];
         $gameweek = $request->input('gw');
-        $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->get();
+        $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->where('user_id',2)->get();
         $options = Option::first();
         $cacheData = Cache::get('leaderboard_fixtures__data__cache');
         if ($cacheData) {
@@ -65,8 +65,8 @@ class LeaderboardController extends Controller
         }
 
 
-
         foreach ($predictions as $prediction) {
+
             $total_pts = 0;
             $home_team_predict = $prediction->team_h_goal['value'];
             $away_team_predict = $prediction->team_a_goal['value'];
@@ -94,7 +94,7 @@ class LeaderboardController extends Controller
                 $predict_result = "draw";
             }
 
-            if ($final_result == $predict_result) {
+            if ($final_result === $predict_result) {
                 $total_pts = $total_pts + $options->win_lose_draw_pts;
             }
 
@@ -103,22 +103,22 @@ class LeaderboardController extends Controller
             $goal_different = abs($home_team_score - $away_team_score);
             $goal_different_predict = abs($home_team_predict - $away_team_predict);
 
-            if ($goal_different == $goal_different_predict) {
+            if ($goal_different === $goal_different_predict) {
                 $total_pts = $total_pts +  $options->goal_difference_pts;
             }
 
             // calculate team goal pts
-            if ($home_team_predict == $home_team_score) {
+            if ($home_team_predict === $home_team_score) {
                 $total_pts = $total_pts +  $options->home_goals_pts;
             }
 
-            if ($away_team_predict == $away_team_score) {
+            if ($away_team_predict === $away_team_score) {
                 $total_pts = $total_pts +  $options->away_goals_pts;
             }
 
             // two x booster pts
 
-            if ($prediction->twox_booster == 1) {
+            if ($prediction->twox_booster === 1) {
                 $total_pts = $total_pts * $options->twox_booster_pts;
             }
 
@@ -128,26 +128,34 @@ class LeaderboardController extends Controller
         }
 
 
+
         $result = array();
         foreach ($arrayData as $k => $v) {
             $id = $v['user']['id'];
             $result[$id]['pts'][] = $v['total_pts'];
             $result[$id]['user'] = $v['user'];
         }
+
+
+
         $new = array();
+
 
         foreach ($result as $key => $value) {
             $new[] = array('user' => $value['user'], 'total_pts' => array_sum($value['pts']));
         }
 
+
+
+
         $collectData = collect($new);
         $sortedData = $collectData->sortByDesc('total_pts');
-
         return response()->json([
+
             'success' => true,
             'flag' => 'leaderboard',
             'message' => 'Get Leaderboard List',
-            'data' => $sortedData
+            'data' => $sortedData->values()
         ], 200);
     }
 }

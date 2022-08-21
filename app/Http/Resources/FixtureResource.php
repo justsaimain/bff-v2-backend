@@ -76,9 +76,9 @@ class FixtureResource extends JsonResource
 
                     // calculate win lose draw point > +3 pts
 
-                        $home_team_win = $home_team_score > $away_team_score;
-                        $home_team_win = $home_team_score > $away_team_score;
-                        $both_team_draw = $home_team_score == $away_team_score;
+                    $home_team_win = $home_team_score > $away_team_score;
+                    $home_team_win = $home_team_score > $away_team_score;
+                    $both_team_draw = $home_team_score == $away_team_score;
 
                     $final_result = "";
                     $predict_result = "";
