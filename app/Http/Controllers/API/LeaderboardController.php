@@ -50,7 +50,7 @@ class LeaderboardController extends Controller
     {
         $arrayData = [];
         $gameweek = $request->input('gw');
-        $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->where('user_id',2)->get();
+        $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->get();
         $options = Option::first();
         $cacheData = Cache::get('leaderboard_fixtures__data__cache');
         if ($cacheData) {
@@ -68,6 +68,7 @@ class LeaderboardController extends Controller
         foreach ($predictions as $prediction) {
 
             $total_pts = 0;
+
             $home_team_predict = $prediction->team_h_goal['value'];
             $away_team_predict = $prediction->team_a_goal['value'];
             $fixture_result = $this->getFixtureResult($prediction);
