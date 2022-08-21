@@ -152,11 +152,12 @@ class LeaderboardController extends Controller
         $collectData = collect($new);
         $sortedData = $collectData->sortByDesc('total_pts');
         return response()->json([
-
             'success' => true,
             'flag' => 'leaderboard',
             'message' => 'Get Leaderboard List',
-            'data' => $sortedData->values()
+            'data' => $sortedData->values()->filter(function($value){
+                return $value['total_pts'] > 0;
+            })
         ], 200);
     }
 }
