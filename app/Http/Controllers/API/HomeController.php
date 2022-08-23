@@ -147,11 +147,10 @@ class HomeController extends Controller
             }
         }
 
-
-        $predictions = Prediction::where('fixture_event', $current_gameweek)->orderBy("twox_booster", "desc") ->get();
-
+        $predictions = Prediction::where('fixture_event', $current_gameweek)->get();
 
         foreach ($predictions as $prediction) {
+            $used_booster_high_score_loop = 0;
             $temp_score_list = [];
             $fixture_result = $this->getFixtureResult($prediction);
 
@@ -180,7 +179,10 @@ class HomeController extends Controller
                 $predict_result = "draw";
             }
 
+            // echo "#predict >>>> " .  $prediction->id;
+
             if ($final_result === $predict_result) {
+                // echo "#same = " .  $options->win_lose_draw_pts;
                 array_push($temp_score_list, $options->win_lose_draw_pts);
             }
 
@@ -188,29 +190,32 @@ class HomeController extends Controller
             $goal_different_predict = abs($home_team_predict - $away_team_predict);
 
             if ($goal_different === $goal_different_predict) {
+                // echo "#dff = " .  $options->goal_difference_pts;
+
                 array_push($temp_score_list, $options->goal_difference_pts);
             }
 
             if ($home_team_predict === $home_team_score) {
+                // echo "#home = " .  $options->home_goals_pts;
                 array_push($temp_score_list, $options->home_goals_pts);
             }
 
             if ($away_team_predict === $away_team_score) {
+                // echo "#away = " .  $options->away_goals_pts;
                 array_push($temp_score_list, $options->away_goals_pts);
             }
 
             $final_temp_score = array_sum($temp_score_list);
-
-            if ($prediction->twox_booster === 1) {
-                if ($used_twox_booster_high_score !== 1) {
+            if ($prediction->twox_booster == 1) {
+                if ($used_booster_high_score_loop !== 1) {
                     $final_temp_score = $final_temp_score * $options->twox_booster_pts;
-                    // array_push($temp_score_list ,array_sum($temp_score_list) * $options->twox_booster_pts);
-                    $used_twox_booster_high_score = 1;
+                    $used_booster_high_score_loop = 1;
                 }
             }
 
             array_push($user_score_list, ['id' => $prediction->user_id ,'user'=> $prediction->user, 'pts' => $final_temp_score]);
         }
+
 
         if ($user) {
             $your_prediction = Prediction::where('user_id', $user->id)
@@ -269,19 +274,14 @@ class HomeController extends Controller
 
                 $final_temp_score = array_sum($temp_score_list);
 
-                if ($prediction->twox_booster === 1) {
+                if ($prediction->twox_booster == 1) {
                     if ($used_twox_booster_your_score !== 1) {
                         $final_temp_score = $final_temp_score * $options->twox_booster_pts;
                         $used_twox_booster_your_score = 1;
                     }
                 }
-
                 array_push($your_score_list, $final_temp_score);
             }
-
-
-
-
         }
 
         $result = array();
@@ -291,7 +291,6 @@ class HomeController extends Controller
             $result[$id]['user'] = $v['user'];
         }
 
-
         $filtered_score_list = array();
         foreach ($result as $key => $value) {
             $filtered_score_list[] = array('id' => $key, 'pts' => array_sum($value['pts']) , 'user' => $value['user']);
@@ -299,10 +298,9 @@ class HomeController extends Controller
 
 
 
-
-
         $pts_list = array_column($filtered_score_list, 'pts');
         $max_pts_index = count($pts_list) > 0 ? array_keys($pts_list, max($pts_list)) : 0;
+
 
         return response()->json([
             'success' => true,

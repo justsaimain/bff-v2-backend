@@ -95,7 +95,11 @@ class LeaderboardController extends Controller
                 $predict_result = "draw";
             }
 
+            // echo "#predict >>>> " .  $prediction->id;
+
+
             if ($final_result === $predict_result) {
+                // echo "#same = " .  $options->win_lose_draw_pts;
                 $total_pts = $total_pts + $options->win_lose_draw_pts;
             }
 
@@ -105,21 +109,25 @@ class LeaderboardController extends Controller
             $goal_different_predict = abs($home_team_predict - $away_team_predict);
 
             if ($goal_different === $goal_different_predict) {
+                // echo "#dff = " .  $options->goal_difference_pts;
                 $total_pts = $total_pts +  $options->goal_difference_pts;
             }
 
             // calculate team goal pts
             if ($home_team_predict === $home_team_score) {
+                // echo "#home = " .  $options->home_goals_pts;
                 $total_pts = $total_pts +  $options->home_goals_pts;
             }
 
             if ($away_team_predict === $away_team_score) {
+                // echo "#away = " .  $options->away_goals_pts;
                 $total_pts = $total_pts +  $options->away_goals_pts;
             }
 
             // two x booster pts
 
             if ($prediction->twox_booster === 1) {
+                // echo "#boosted  x= " .  $options->twox_booster_pts;
                 $total_pts = $total_pts * $options->twox_booster_pts;
             }
 
