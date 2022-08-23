@@ -105,7 +105,8 @@ class HomeController extends Controller
             return $item["finished"] === false;
         })->values();
 
-        $first_upcoming_match = $filtered_upcoming_matches[0];
+       if(count($filtered_upcoming_matches) > 0){
+        $first_upcoming_match =  $filtered_upcoming_matches[0];
 
         $first_upcoming_match_full_date =  Carbon::parse($first_upcoming_match['kickoff_time'])->subMinutes(30);
 
@@ -116,6 +117,13 @@ class HomeController extends Controller
             "hours" => $different_from_full_date->h,
             "minutes" => $different_from_full_date->i
         ];
+       }else{
+        $deadline = [
+            "days" => 0,
+            "hours" => 0,
+            "minutes" => 0
+        ];
+       }
 
 
         $recent_matchs = [];
@@ -288,6 +296,7 @@ class HomeController extends Controller
         foreach ($result as $key => $value) {
             $filtered_score_list[] = array('id' => $key, 'pts' => array_sum($value['pts']) , 'user' => $value['user']);
         }
+
 
 
 
