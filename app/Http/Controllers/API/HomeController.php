@@ -105,25 +105,26 @@ class HomeController extends Controller
             return $item["finished"] === false;
         })->values();
 
-       if(count($filtered_upcoming_matches) > 0){
-        $first_upcoming_match =  $filtered_upcoming_matches[0];
 
-        $first_upcoming_match_full_date =  Carbon::parse($first_upcoming_match['kickoff_time'])->subMinutes(30);
+        if (count($filtered_upcoming_matches) > 0) {
+            $first_upcoming_match =  $filtered_upcoming_matches[0];
 
-        $different_from_full_date = Carbon::now()->diff($first_upcoming_match_full_date, false);
+            $first_upcoming_match_full_date =  Carbon::parse($first_upcoming_match['kickoff_time'])->subMinutes(30);
 
-        $deadline = [
-            "days" => $different_from_full_date->d,
-            "hours" => $different_from_full_date->h,
-            "minutes" => $different_from_full_date->i
-        ];
-       }else{
-        $deadline = [
-            "days" => 0,
-            "hours" => 0,
-            "minutes" => 0
-        ];
-       }
+            $different_from_full_date = Carbon::now()->diff($first_upcoming_match_full_date, false);
+
+            $deadline = [
+                "days" => $different_from_full_date->d,
+                "hours" => $different_from_full_date->h,
+                "minutes" => $different_from_full_date->i
+            ];
+        } else {
+            $deadline = [
+                "days" => 0,
+                "hours" => 0,
+                "minutes" => 0
+            ];
+        }
 
 
         $recent_matchs = [];
@@ -154,87 +155,15 @@ class HomeController extends Controller
             $temp_score_list = [];
             $fixture_result = $this->getFixtureResult($prediction);
 
-            $final_result = "";
-            $predict_result = "";
-
-
-            $home_team_predict = $prediction->team_h_goal['value'];
-            $away_team_predict = $prediction->team_a_goal['value'];
-            $home_team_score = $fixture_result['team_h_score'];
-            $away_team_score = $fixture_result['team_a_score'];
-
-            if ($home_team_score > $away_team_score) {
-                $final_result = "home_team_win";
-            } elseif ($home_team_score < $away_team_score) {
-                $final_result = "home_team_lose";
-            } elseif ($home_team_score == $away_team_score) {
-                $final_result = "draw";
-            }
-
-            if ($home_team_predict > $away_team_predict) {
-                $predict_result = "home_team_win";
-            } elseif ($home_team_predict < $away_team_predict) {
-                $predict_result = "home_team_lose";
-            } elseif ($home_team_predict == $away_team_predict) {
-                $predict_result = "draw";
-            }
-
-            // echo "#predict >>>> " .  $prediction->id;
-
-            if ($final_result === $predict_result) {
-                // echo "#same = " .  $options->win_lose_draw_pts;
-                array_push($temp_score_list, $options->win_lose_draw_pts);
-            }
-
-            $goal_different = abs($home_team_score - $away_team_score);
-            $goal_different_predict = abs($home_team_predict - $away_team_predict);
-
-            if ($goal_different === $goal_different_predict) {
-                // echo "#dff = " .  $options->goal_difference_pts;
-
-                array_push($temp_score_list, $options->goal_difference_pts);
-            }
-
-            if ($home_team_predict === $home_team_score) {
-                // echo "#home = " .  $options->home_goals_pts;
-                array_push($temp_score_list, $options->home_goals_pts);
-            }
-
-            if ($away_team_predict === $away_team_score) {
-                // echo "#away = " .  $options->away_goals_pts;
-                array_push($temp_score_list, $options->away_goals_pts);
-            }
-
-            $final_temp_score = array_sum($temp_score_list);
-            if ($prediction->twox_booster == 1) {
-                if ($used_booster_high_score_loop !== 1) {
-                    $final_temp_score = $final_temp_score * $options->twox_booster_pts;
-                    $used_booster_high_score_loop = 1;
-                }
-            }
-
-            array_push($user_score_list, ['id' => $prediction->user_id ,'user'=> $prediction->user, 'pts' => $final_temp_score]);
-        }
-
-
-        if ($user) {
-            $your_prediction = Prediction::where('user_id', $user->id)
-                        ->where('fixture_event', $current_gameweek)
-                        ->get();
-
-
-
-            foreach ($your_prediction as $prediction) {
-                $temp_score_list = [];
-                $fixture_result = $this->getFixtureResult($prediction);
+            if ($fixture_result['team_h_score'] !== null && $fixture_result['team_a_score'] !== null) {
                 $final_result = "";
                 $predict_result = "";
+
 
                 $home_team_predict = $prediction->team_h_goal['value'];
                 $away_team_predict = $prediction->team_a_goal['value'];
                 $home_team_score = $fixture_result['team_h_score'];
                 $away_team_score = $fixture_result['team_a_score'];
-
 
                 if ($home_team_score > $away_team_score) {
                     $final_result = "home_team_win";
@@ -252,8 +181,10 @@ class HomeController extends Controller
                     $predict_result = "draw";
                 }
 
+                // echo "#predict >>>> " .  $prediction->id;
 
                 if ($final_result === $predict_result) {
+                    // echo "#same = " .  $options->win_lose_draw_pts;
                     array_push($temp_score_list, $options->win_lose_draw_pts);
                 }
 
@@ -261,28 +192,103 @@ class HomeController extends Controller
                 $goal_different_predict = abs($home_team_predict - $away_team_predict);
 
                 if ($goal_different === $goal_different_predict) {
+                    // echo "#dff = " .  $options->goal_difference_pts;
+
                     array_push($temp_score_list, $options->goal_difference_pts);
                 }
 
                 if ($home_team_predict === $home_team_score) {
+                    // echo "#home = " .  $options->home_goals_pts;
                     array_push($temp_score_list, $options->home_goals_pts);
                 }
 
                 if ($away_team_predict === $away_team_score) {
+                    // echo "#away = " .  $options->away_goals_pts;
                     array_push($temp_score_list, $options->away_goals_pts);
                 }
 
                 $final_temp_score = array_sum($temp_score_list);
-
                 if ($prediction->twox_booster == 1) {
-                    if ($used_twox_booster_your_score !== 1) {
+                    if ($used_booster_high_score_loop !== 1) {
                         $final_temp_score = $final_temp_score * $options->twox_booster_pts;
-                        $used_twox_booster_your_score = 1;
+                        $used_booster_high_score_loop = 1;
                     }
                 }
-                array_push($your_score_list, $final_temp_score);
+
+                array_push($user_score_list, ['id' => $prediction->user_id ,'user'=> $prediction->user, 'pts' => $final_temp_score]);
             }
         }
+
+
+        if ($user) {
+            $your_prediction = Prediction::where('user_id', $user->id)
+                        ->where('fixture_event', $current_gameweek)
+                        ->get();
+
+
+
+            foreach ($your_prediction as $prediction) {
+                $temp_score_list = [];
+                $fixture_result = $this->getFixtureResult($prediction);
+                if ($fixture_result['team_h_score'] !== null && $fixture_result['team_a_score'] !== null) {
+                    $final_result = "";
+                    $predict_result = "";
+
+                    $home_team_predict = $prediction->team_h_goal['value'];
+                    $away_team_predict = $prediction->team_a_goal['value'];
+                    $home_team_score = $fixture_result['team_h_score'];
+                    $away_team_score = $fixture_result['team_a_score'];
+
+
+                    if ($home_team_score > $away_team_score) {
+                        $final_result = "home_team_win";
+                    } elseif ($home_team_score < $away_team_score) {
+                        $final_result = "home_team_lose";
+                    } elseif ($home_team_score == $away_team_score) {
+                        $final_result = "draw";
+                    }
+
+                    if ($home_team_predict > $away_team_predict) {
+                        $predict_result = "home_team_win";
+                    } elseif ($home_team_predict < $away_team_predict) {
+                        $predict_result = "home_team_lose";
+                    } elseif ($home_team_predict == $away_team_predict) {
+                        $predict_result = "draw";
+                    }
+
+
+                    if ($final_result === $predict_result) {
+                        array_push($temp_score_list, $options->win_lose_draw_pts);
+                    }
+
+                    $goal_different = abs($home_team_score - $away_team_score);
+                    $goal_different_predict = abs($home_team_predict - $away_team_predict);
+
+                    if ($goal_different === $goal_different_predict) {
+                        array_push($temp_score_list, $options->goal_difference_pts);
+                    }
+
+                    if ($home_team_predict === $home_team_score) {
+                        array_push($temp_score_list, $options->home_goals_pts);
+                    }
+
+                    if ($away_team_predict === $away_team_score) {
+                        array_push($temp_score_list, $options->away_goals_pts);
+                    }
+
+                    $final_temp_score = array_sum($temp_score_list);
+
+                    if ($prediction->twox_booster == 1) {
+                        if ($used_twox_booster_your_score !== 1) {
+                            $final_temp_score = $final_temp_score * $options->twox_booster_pts;
+                            $used_twox_booster_your_score = 1;
+                        }
+                    }
+                    array_push($your_score_list, $final_temp_score);
+                }
+            }
+        }
+
 
         $result = array();
         foreach ($user_score_list as $k => $v) {
@@ -291,10 +297,12 @@ class HomeController extends Controller
             $result[$id]['user'] = $v['user'];
         }
 
+
         $filtered_score_list = array();
         foreach ($result as $key => $value) {
             $filtered_score_list[] = array('id' => $key, 'pts' => array_sum($value['pts']) , 'user' => $value['user']);
         }
+
 
 
 
@@ -311,7 +319,7 @@ class HomeController extends Controller
                 'current_gameweek' => $current_gameweek,
                 'your_score' => array_sum($your_score_list),
                 'avg_score' => count($filtered_score_list) > 0 ? round(array_sum(array_column($filtered_score_list, 'pts')) / count($filtered_score_list)) : 0,
-                'highest_score' => count($pts_list) > 0 ? max($pts_list) : 1,
+                'highest_score' => count($pts_list) > 0 ? max($pts_list) : 0,
                 'top_predictor' => count($filtered_score_list) > 0 ? $filtered_score_list[$max_pts_index[0]] : null,
                 'recent_matchs' => $recent_matchs,
                 'deadline' => $deadline
