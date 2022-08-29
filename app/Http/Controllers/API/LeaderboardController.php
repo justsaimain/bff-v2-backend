@@ -51,7 +51,14 @@ class LeaderboardController extends Controller
     {
         $arrayData = [];
         $gameweek = $request->input('gw');
-        $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->get();
+        $of_user = $request->input('user');
+
+        if($of_user){
+            $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->where('user_id',$of_user)->get();
+        }else{
+            $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->get();
+        }
+
 
         $options = Option::first();
         $cacheData = Cache::get('leaderboard_fixtures__data__cache');
@@ -70,11 +77,10 @@ class LeaderboardController extends Controller
         foreach ($predictions as $prediction) {
 
             $total_pts = 0;
-
+            $point_logs = [];
             $home_team_predict = $prediction->team_h_goal['value'];
             $away_team_predict = $prediction->team_a_goal['value'];
             $fixture_result = $this->getFixtureResult($prediction);
-
 
             if($fixture_result['team_h_score'] === null && $fixture_result['team_a_score'] === null){
                 $prediction['total_pts'] = 0;
@@ -102,11 +108,9 @@ class LeaderboardController extends Controller
                     $predict_result = "draw";
                 }
 
-                // echo "#predict >>>> " .  $prediction->id;
-
 
                 if ($final_result === $predict_result) {
-                    // echo "#same = " .  $options->win_lose_draw_pts;
+                    echo "#same = " .  $options->win_lose_draw_pts;
                     $total_pts = $total_pts + $options->win_lose_draw_pts;
                 }
 
@@ -117,28 +121,35 @@ class LeaderboardController extends Controller
 
                 if ($goal_different === $goal_different_predict) {
                     // echo "#dff = " .  $options->goal_difference_pts;
+                    array_push($point_logs , ['goal_different' => $options->goal_difference_pts] );
                     $total_pts = $total_pts +  $options->goal_difference_pts;
                 }
 
                 // calculate team goal pts
                 if ($home_team_predict === $home_team_score) {
                     // echo "#home = " .  $options->home_goals_pts;
+                    array_push($point_logs , ['home_team' => $options->home_goals_pts] );
                     $total_pts = $total_pts +  $options->home_goals_pts;
                 }
 
                 if ($away_team_predict === $away_team_score) {
                     // echo "#away = " .  $options->away_goals_pts;
+                    array_push($point_logs , ['away_team' => $options->away_goals_pts] );
                     $total_pts = $total_pts +  $options->away_goals_pts;
                 }
 
                 // two x booster pts
 
                 if ($prediction->twox_booster === 1) {
+                    // echo "#before boosted  bx2= " . $total_pts;
                     // echo "#boosted  x= " .  $options->twox_booster_pts;
+                    array_push($point_logs , ['before_boost' => $total_pts] );
+                    array_push($point_logs , ['after_boost' => $total_pts * $options->twox_booster_pts] );
                     $total_pts = $total_pts * $options->twox_booster_pts;
                 }
 
                 $prediction['total_pts'] = $total_pts;
+                $prediction['point_logs'] = $point_logs;
 
                 array_push($arrayData, $prediction);
             }
@@ -151,16 +162,16 @@ class LeaderboardController extends Controller
         foreach ($arrayData as $k => $v) {
             $id = $v['user']['id'];
             $result[$id]['pts'][] = $v['total_pts'];
+            $result[$id]['point_logs'] = $v['point_logs'];
             $result[$id]['user'] = $v['user'];
         }
-
 
 
         $new = array();
 
 
         foreach ($result as $key => $value) {
-            $new[] = array('user' => $value['user'], 'total_pts' => array_sum($value['pts']));
+            $new[] = array('user' => $value['user'], 'total_pts' => array_sum($value['pts']) , 'point_logs' => $value['point_logs']);
         }
 
 
