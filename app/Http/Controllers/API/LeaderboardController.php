@@ -163,7 +163,7 @@ class LeaderboardController extends Controller
         foreach ($arrayData as $k => $v) {
             $id = $v['user']['id'];
             $result[$id]['pts'][] = $v['total_pts'];
-            $result[$id]['point_logs'] = $v['point_logs'];
+            $result[$id]['point_logs'][] = $v['point_logs'];
             $result[$id]['user'] = $v['user'];
         }
 
