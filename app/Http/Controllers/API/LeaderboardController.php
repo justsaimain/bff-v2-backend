@@ -110,7 +110,8 @@ class LeaderboardController extends Controller
 
 
                 if ($final_result === $predict_result) {
-                    echo "#same = " .  $options->win_lose_draw_pts;
+                    // echo "#same = " .  $options->win_lose_draw_pts;
+                    array_push($point_logs , ['win_lose' => $options->win_lose_draw_pts] );
                     $total_pts = $total_pts + $options->win_lose_draw_pts;
                 }
 
