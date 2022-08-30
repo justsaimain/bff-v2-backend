@@ -58,8 +58,9 @@ class LeaderboardController extends Controller
         }else{
             $predictions = Prediction::with('user')->where('fixture_event', $gameweek)->get();
         }
+ 
 
-
+        return $predictions;
         $options = Option::first();
         $cacheData = Cache::get('leaderboard_fixtures__data__cache');
         if ($cacheData) {
@@ -72,6 +73,7 @@ class LeaderboardController extends Controller
             $fixtures = $response->json();
             Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(3));
         }
+
 
 
         foreach ($predictions as $prediction) {
