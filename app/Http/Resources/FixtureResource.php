@@ -112,8 +112,8 @@ class FixtureResource extends JsonResource
 
                     // calculate goal different pts
 
-                    $goal_different = abs($home_team_score - $away_team_score);
-                    $goal_different_predict = abs($home_team_predict - $away_team_predict);
+                    $goal_different = $home_team_score - $away_team_score;
+                    $goal_different_predict = $home_team_predict - $away_team_predict;
 
                     if ($goal_different == $goal_different_predict) {
                         $total_pts = $total_pts +  $options->goal_difference_pts;

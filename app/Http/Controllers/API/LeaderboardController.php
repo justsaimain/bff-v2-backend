@@ -77,9 +77,10 @@ class LeaderboardController extends Controller
 
 
 
-        foreach ($predictions as $prediction) {
+        foreach ($predictions as $key => $prediction) {
             $total_pts = 0;
             $point_logs = [];
+            $fixture_logs = [];
             $home_team_predict = $prediction->team_h_goal['value'];
             $away_team_predict = $prediction->team_a_goal['value'];
             $fixture_result = $this->getFixtureResult($prediction);
@@ -115,31 +116,32 @@ class LeaderboardController extends Controller
 
                 if ($final_result === $predict_result) {
                     // echo "#same = " .  $options->win_lose_draw_pts;
-                    array_push($point_logs, ['win_lose' => $options->win_lose_draw_pts]);
+                    array_push($point_logs, ['Outcome (win/draw/lose)' => $options->win_lose_draw_pts]);
                     $total_pts = $total_pts + $options->win_lose_draw_pts;
                 }
 
                 // calculate goal different pts
 
-                $goal_different = abs($home_team_score - $away_team_score);
-                $goal_different_predict = abs($home_team_predict - $away_team_predict);
+                $goal_different = $home_team_score - $away_team_score;
+                $goal_different_predict = $home_team_predict - $away_team_predict;
+
 
                 if ($goal_different === $goal_different_predict) {
                     // echo "#dff = " .  $options->goal_difference_pts;
-                    array_push($point_logs, ['goal_different' => $options->goal_difference_pts]);
+                    array_push($point_logs, ['Goal difference' => $options->goal_difference_pts]);
                     $total_pts = $total_pts +  $options->goal_difference_pts;
                 }
 
                 // calculate team goal pts
                 if ($home_team_predict === $home_team_score) {
                     // echo "#home = " .  $options->home_goals_pts;
-                    array_push($point_logs, ['home_team' => $options->home_goals_pts]);
+                    array_push($point_logs, ['Home goals' => $options->home_goals_pts]);
                     $total_pts = $total_pts +  $options->home_goals_pts;
                 }
 
                 if ($away_team_predict === $away_team_score) {
                     // echo "#away = " .  $options->away_goals_pts;
-                    array_push($point_logs, ['away_team' => $options->away_goals_pts]);
+                    array_push($point_logs, ['Away goals' => $options->away_goals_pts]);
                     $total_pts = $total_pts +  $options->away_goals_pts;
                 }
 
@@ -148,13 +150,21 @@ class LeaderboardController extends Controller
                 if ($prediction->twox_booster === 1) {
                     // echo "#before boosted  bx2= " . $total_pts;
                     // echo "#boosted  x= " .  $options->twox_booster_pts;
-                    array_push($point_logs, ['before_boost' => $total_pts]);
-                    array_push($point_logs, ['after_boost' => $total_pts * $options->twox_booster_pts]);
+                    array_push($point_logs, ['Before 2x Boosted' => $total_pts]);
+                    array_push($point_logs, ['After 2x Boosted' => $total_pts * $options->twox_booster_pts]);
                     $total_pts = $total_pts * $options->twox_booster_pts;
                 }
 
                 $prediction['total_pts'] = $total_pts;
                 $prediction['point_logs'] = $point_logs;
+                $prediction['fixture_logs'] = [
+                    'team_h_predict' => $home_team_predict,
+                    'team_a_predict' => $away_team_predict,
+                    'team_h_score' => $home_team_score,
+                    'team_a_score' => $away_team_score,
+                    'twox_booster' => $prediction->twox_booster,
+                    'result_pts' => $total_pts
+                ];
                 $prediction['team_a'] = $away_team;
                 $prediction['team_h'] = $home_team;
 
@@ -168,6 +178,7 @@ class LeaderboardController extends Controller
             $id = $v['user']['id'];
             $result[$id]['pts'][] = $v['total_pts'];
             $result[$id]['point_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['point_logs'];
+            $result[$id]['fixture_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['fixture_logs'];
             $result[$id]['user'] = $v['user'];
         }
 
@@ -176,7 +187,7 @@ class LeaderboardController extends Controller
 
 
         foreach ($result as $key => $value) {
-            $new[] = array('user' => $value['user'], 'total_pts' => array_sum($value['pts']) , 'point_logs' => $value['point_logs']);
+            $new[] = array('user' => $value['user'], 'total_pts' => array_sum($value['pts']) , 'point_logs' => $value['point_logs'] , 'fixture_logs' => $value['fixture_logs']);
         }
 
         $collectData = collect($new);
