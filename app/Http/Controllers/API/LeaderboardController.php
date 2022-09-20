@@ -71,7 +71,7 @@ class LeaderboardController extends Controller
                 'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
             ])->get('https://fantasy-premier-league3.p.rapidapi.com/fixtures');
             $fixtures = $response->json();
-            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(3));
+            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(20));
         }
 
 
