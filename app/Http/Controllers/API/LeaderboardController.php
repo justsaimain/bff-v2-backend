@@ -13,18 +13,18 @@ class LeaderboardController extends Controller
 {
     public function getFixtureResult($fixture)
     {
-        $cacheData = Cache::get('leaderboard_fixtures__data__cache');
-        if ($cacheData) {
-            $fixtures = $cacheData;
-        } else {
+        // $cacheData = Cache::get('leaderboard_fixtures__data__cache');
+        // if ($cacheData) {
+        //     $fixtures = $cacheData;
+        // } else {
             $fixtures = Http::withHeaders([
                 'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
                 'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
             ])->get(config('url.fixtures'), [
                 'gw' => $fixture->fixture_event,
             ])->json();
-            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addSeconds(20));
-        }
+            // Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addSeconds(5));
+        // }
 
         $fixture_collection = collect($fixtures);
         $filtered = $fixture_collection->filter(function ($item) use ($fixture) {
@@ -62,17 +62,17 @@ class LeaderboardController extends Controller
 
 
         $options = Option::first();
-        $cacheData = Cache::get('leaderboard_fixtures__data__cache');
-        if ($cacheData) {
-            $fixtures = $cacheData;
-        } else {
-            $response =  Http::withHeaders([
-                'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
-                'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
-            ])->get('https://fantasy-premier-league3.p.rapidapi.com/fixtures');
-            $fixtures = $response->json();
-            Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(20));
-        }
+        // $cacheData = Cache::get('leaderboard_fixtures__data__cache');
+        // if ($cacheData) {
+        //     $fixtures = $cacheData;
+        // } else {
+            // $response =  Http::withHeaders([
+            //     'x-rapidapi-host' => 'fantasy-premier-league3.p.rapidapi.com',
+            //     'x-rapidapi-key' => 'abe4621a9bmshbc1c9a211f870d6p157512jsnd3bbdf64de8b'
+            // ])->get('https://fantasy-premier-league3.p.rapidapi.com/fixtures');
+            // $fixtures = $response->json();
+            // Cache::put('leaderboard_fixtures__data__cache', $fixtures, now()->addMinutes(20));
+        // }
 
 
 
