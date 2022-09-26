@@ -81,7 +81,6 @@ class LeaderboardController extends Controller
 
 
 
-
         foreach ($predictions as $key => $prediction) {
             $total_pts = 0;
             $point_logs = [];
@@ -197,13 +196,19 @@ class LeaderboardController extends Controller
 
         $collectData = collect($new);
         $sortedData = $collectData->sortByDesc('total_pts');
+
+        $returnData = $sortedData->values()->filter(function ($value) {
+            return $value['total_pts'] > 0;
+        });
+
+        if(count($returnData) < 1){
+            Cache::flush();
+        }
         return response()->json([
             'success' => true,
             'flag' => 'leaderboard',
             'message' => 'Get Leaderboard List',
-            'data' => $sortedData->values()->filter(function ($value) {
-                return $value['total_pts'] > 0;
-            })
+            'data' => $returnData
         ], 200);
     }
 }
