@@ -52,7 +52,6 @@ class LeaderboardController extends Controller
 
     public function __invoke(Request $request)
     {
-
         $arrayData = [];
         $gameweek = $request->input('gw');
         $of_user = $request->input('user');
@@ -180,7 +179,7 @@ class LeaderboardController extends Controller
         $result = array();
         foreach ($arrayData as $k => $v) {
             $id = $v['user']['id'];
-            $result[$id]['pts'][] = $v['total_pts'];
+            $result[$id]['pts'][] = $v['total_pts'] ? $v['total_pts'] : 0;
             $result[$id]['point_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['point_logs'];
             $result[$id]['fixture_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['fixture_logs'];
             $result[$id]['user'] = $v['user'];
@@ -201,14 +200,15 @@ class LeaderboardController extends Controller
             return $value['total_pts'] > 0;
         });
 
-        if(count($returnData) < 1){
+        if (count($returnData) < 1) {
             Cache::flush();
         }
+
         return response()->json([
-            'success' => true,
-            'flag' => 'leaderboard',
-            'message' => 'Get Leaderboard List',
-            'data' => $returnData
-        ], 200);
+                'success' => true,
+                'flag' => 'leaderboard',
+                'message' => 'Get Leaderboard List',
+                'data' => $returnData
+            ], 200);
     }
 }
