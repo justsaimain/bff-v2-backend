@@ -179,13 +179,13 @@ class LeaderboardController extends Controller
         $result = array();
         foreach ($arrayData as $k => $v) {
             $id = $v['user']['id'];
-            $result[$id]['pts'][] = $v['total_pts'] ? $v['total_pts'] : 0;
+            $result[$id]['pts'][] = $v['total_pts'];
             $result[$id]['point_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['point_logs'];
             $result[$id]['fixture_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['fixture_logs'];
             $result[$id]['user'] = $v['user'];
         }
 
-
+        return $arrayData;
         $new = array();
 
 
