@@ -180,12 +180,14 @@ class LeaderboardController extends Controller
 
 
         foreach ($arrayData as $k => $v) {
-            if($v){
                 $id = $v['user']['id'];
-                $result[$id]['pts'][] = $v['total_pts'];
-                $result[$id]['point_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['point_logs'];
-                $result[$id]['fixture_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['fixture_logs'];
-                $result[$id]['user'] = $v['user'];
+                if($id){
+                    $result[$id]['pts'][] = $v['total_pts'];
+                    $result[$id]['point_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['point_logs'];
+                    $result[$id]['fixture_logs'][strval($v['team_h']) . " vs " . strval($v['team_a']) ] = $v['fixture_logs'];
+                    $result[$id]['user'] = $v['user'];
+                }
+
             }
         }
 
